@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buzón Active Leasing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon">
+</head>
+<body>
+<header class="topbar">
+    <div class="topbar-container">
+        <div class="brand">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" class="brand-logo">
+            <div>
+                <h2>Buzón Active Leasing</h2>
+            </div>
+        </div>
+    </div>
+</header>
+{% block content %}
+{% endblock %}
+<footer class="footer">
+    © 2026 Active Leasing · Sistema de Quejas y Sugerencias
+</footer>
+</body>
+</html>

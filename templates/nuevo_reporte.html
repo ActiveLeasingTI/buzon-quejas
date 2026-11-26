@@ -1,0 +1,267 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="report-container">
+    <form
+        id="formReporte" method="POST" action="{{ url_for('guardar_reporte') }}">
+        <!-- Barra progreso -->
+        <div class="progress-bar">
+            <div
+                class="progress-fill"
+                id="progressFill">
+            </div>
+        </div>
+        <!-- PASO 1 -->
+        <div class="step active" id="step1">
+            <div class="step-card">
+                <h1>Buzón de Quejas, Sugerencias y Reconocimientos</h1>
+                <h3>Talento Humano</h3>
+                <p>En Active Leasing queremos escuchar tu opinión.</p>
+                <p>Este espacio está diseñado para recibir comentarios, inquietudes y propuestas de mejora, 
+                    contribuyendo a un ambiente laboral respetuoso y positivo.</p>
+                <p>La información será tratada con confidencialidad y canalizada al área correspondiente.</p>
+                <label>Consulta nuestro <a href="https://activeleasing.mx/aviso-privacidad">Aviso de Privacidad</a></label>
+                <div class="step-navigation">
+                    <div></div>
+                    <button type="button" class="btn-primary" onclick="nextStep()">Comenzar</button>
+                </div>
+            </div>
+        </div>
+        <!-- PASO 2 -->
+        <div class="step" id="step2">
+            <div class="step-card">
+                <h2>Clasificación</h2>
+                <p>Selecciona una categoría para cada uno</p>
+                <div class="row-form">
+                    <div class="form-group">
+                        <label>Tipo de Comunicación</label>
+                        <select id="tipo_id" name="tipo_id" class="form-control" required>
+                            <option value="">Seleccione...</option>
+                            {% for tipo in tipos %}
+                                <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="categoria_id" name="categoria_id" class="form-control"required>
+                            <option value="">Seleccione...</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Departamento</label>
+                        <select name="departamento_id" class="form-control">
+                            <option value="">Seleccione...</option>
+                            {% for departamento in departamentos %}
+                                <option value="{{ departamento.id }}">{{ departamento.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="step-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+        <!-- PASO 3 -->
+        <div class="step" id="step3">
+            <div class="step-card">
+                <h2>Descripción del Reporte</h2>
+                <div class="form-group">
+                    <label>Fecha de ocurrencia</label>
+                    <input type="date" name="fecha_ocurrencia" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Frecuencia</label>
+                    <select name="frecuencia" class="form-control">
+                        <option value="">Seleccione...</option>
+                        <option>Ocurrió una sola vez</option>
+                        <option>Varias veces al mes</option>
+                        <option>Problema constante</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Describe la situación</label>
+                    <textarea name="descripcion" class="textarea-control" required></textarea>
+                </div>
+                <div class="step-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+                    <button type="button" class="btn-primary" onclick="nextStep()">Siguiente</button>
+                </div>
+            </div>
+        </div>
+        <!-- PASO 4 -->
+        <div class="step" id="step4">
+            <div class="step-card">
+                <h2>Evidencias</h2>
+                <p>Adjunta documentos, imágenes o capturas de pantalla que ayuden a comprender la situación. (opcional)</p>
+                <input type="file" name="evidencias" multiple class="form-control">
+                <div class="step-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()"> Anterior </button>
+                    <button type="button" class="btn-primary" onclick="nextStep()"> Siguiente</button>
+                </div>
+            </div>
+        </div>
+        <!-- PASO 5 -->
+        <div class="step" id="step5">
+            <div class="step-card">
+                <h2>Confidencialidad</h2>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="confidencialidad" value="anonimo" checked> Deseo permanecer anónimo
+                    </label>
+                    <label>
+                        <input type="radio" name="confidencialidad" value="seguimiento">Autorizo seguimiento por Talento Humano
+                    </label>
+                    <label>
+                        <p>El tratamiento de la información está apegado con base en el aviso de privacidad y al protocolo interno de la empresa.</p>
+                    </label>
+                    <label>
+                        <p>No habrá represalias contra quien presente una queja</p>
+                    </label>
+                </div>
+                <div id="datos-contacto" class="contact-data">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="correo" name="correo" class="form-control">
+                    </div>
+                    
+                </div>
+                <div class="step-navigation">
+                    <button type="button" class="btn-secondary" onclick="prevStep()">Anterior</button>
+                    <button type="submit" class="btn-primary">Enviar Reporte</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+
+let currentStep = 1;
+
+showStep(1);
+
+function showStep(step){
+
+    document
+        .querySelectorAll(".step")
+        .forEach(
+            s => s.classList.remove("active")
+        );
+
+    document
+        .getElementById(
+            "step" + step
+        )
+        .classList.add("active");
+
+    document
+        .getElementById(
+            "progressFill"
+        )
+        .style.width =
+        ((step / 5) * 100) + "%";
+}
+
+function nextStep(){
+
+    if(currentStep < 5){
+
+        currentStep++;
+
+        showStep(currentStep);
+
+    }
+}
+
+function prevStep(){
+
+    if(currentStep > 1){
+
+        currentStep--;
+
+        showStep(currentStep);
+
+    }
+}
+
+document
+.addEventListener(
+"DOMContentLoaded",
+function(){
+
+    const radios =
+        document.querySelectorAll(
+            'input[name="confidencialidad"]'
+        );
+
+    const datos =
+        document.getElementById(
+            "datos-contacto"
+        );
+
+    const nombre =
+        document.getElementById(
+            "nombre"
+        );
+
+    const correo =
+        document.getElementById(
+            "correo"
+        );
+
+    radios.forEach(
+        radio => {
+
+            radio.addEventListener(
+                "change",
+                function(){
+
+                    if(
+                        this.value ===
+                        "seguimiento"
+                    ){
+
+                        datos.style.display =
+                            "block";
+
+                        nombre.required =
+                            true;
+
+                        correo.required =
+                            true;
+
+                    }else{
+
+                        datos.style.display =
+                            "none";
+
+                        nombre.required =
+                            false;
+
+                        correo.required =
+                            false;
+
+                        nombre.value = "";
+                        correo.value = "";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+});
+
+</script>
+
+{% endblock %}
